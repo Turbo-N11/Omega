@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ω omega — research desk</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext x='16' y='24' font-size='26' text-anchor='middle' font-family='Georgia,serif' fill='%23d4a843'%3E%CE%A9%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-row">
+        <span class="omega-symbol">Ω</span>
+        <span class="name">OMEGA</span>
+      </div>
+      <div class="tagline">private research desk</div>
+    </div>
+
+    <div class="sidebar-nav">
+      <button class="nav-item active" id="nav-home">
+        <span class="nav-ico">⌂</span> Home
+      </button>
+      <button class="nav-item" id="nav-recent">
+        <span class="nav-ico">◷</span> Recent
+      </button>
+    </div>
+
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input id="search-input" type="text" placeholder="Search notes…" aria-label="Search notes">
+        <kbd class="search-kbd">/</kbd>
+      </div>
+      <div id="search-results" class="search-results hidden"></div>
+    </div>
+
+    <div class="sidebar-sections">
+      <div class="sidebar-section grow">
+        <div class="section-head">
+          <h3>Ideas</h3>
+          <div class="section-actions">
+            <button class="mini-btn" id="btn-sort-ideas" title="Sort ideas" aria-label="Sort ideas">↕</button>
+            <button class="mini-btn" id="btn-new" title="New idea" aria-label="New idea">+</button>
+          </div>
+        </div>
+        <div class="filter-chips" id="filter-chips">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="pinned">★ Pinned</button>
+          <button class="chip" data-filter="tagged">Tags</button>
+        </div>
+        <div id="ideas-list"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-head">
+          <h3>Research</h3>
+        </div>
+        <div id="research-list"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="section-head">
+          <h3>Re-ideas</h3>
+        </div>
+        <div id="reideas-list"></div>
+      </div>
+    </div>
+
+    <div class="side-foot">
+      <div class="side-foot-left">
+        <button class="settings-btn" id="btn-settings" title="Settings" aria-label="Settings">⚙</button>
+        <button class="terminal-toggle-btn" id="btn-terminal" title="Terminal (Ctrl+`)" aria-label="Terminal">⌬</button>
+      </div>
+      <span class="model-tag" id="model-tag"></span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <button class="menu-btn" id="menu-btn" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-left">
+        <div class="crumb" id="crumb">
+          <span class="crumb-home" id="crumb-home">Ω</span>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="topbar-search">
+          <span class="search-icon">⌕</span>
+          <input id="topbar-search-input" type="text" placeholder="Search or jump to… (Ctrl+K)" aria-label="Search">
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="dropdown" id="actions-dropdown">
+          <button class="btn dropdown-trigger" id="btn-actions">
+            Actions <span class="dropdown-arrow">▾</span>
+          </button>
+          <div class="dropdown-menu hidden" id="actions-menu">
+            <div class="dropdown-group">
+              <div class="dropdown-label">Research</div>
+              <button class="dropdown-item" id="btn-research">
+                <span class="item-icon">📄</span>
+                <div class="item-content">
+                  <span class="item-text">Find Papers</span>
+                  <span class="item-desc">Search arXiv for papers</span>
+                </div>
+                <kbd class="item-shortcut">⌃⇧P</kbd>
+              </button>
+              <button class="dropdown-item" id="btn-reidea">
+                <span class="item-icon">💡</span>
+                <div class="item-content">
+                  <span class="item-text">Re-idea</span>
+                  <span class="item-desc">Refine and validate ideas</span>
+                </div>
+                <kbd class="item-shortcut">⌃⇧R</kbd>
+              </button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-group">
+              <div class="dropdown-label">Explore</div>
+              <button class="dropdown-item" id="btn-trend">
+                <span class="item-icon">📊</span>
+                <div class="item-content">
+                  <span class="item-text">Field Scan</span>
+                  <span class="item-desc">Trends in GitHub + arXiv</span>
+                </div>
+                <kbd class="item-shortcut">⌃⇧F</kbd>
+              </button>
+              <button class="dropdown-item" id="btn-hn">
+                <span class="item-icon">📰</span>
+                <div class="item-content">
+                  <span class="item-text">Hacker News</span>
+                  <span class="item-desc">Top discussions</span>
+                </div>
+                <kbd class="item-shortcut">⌃⇧H</kbd>
+              </button>
+              <button class="dropdown-item" id="btn-github">
+                <span class="item-icon">⭐</span>
+                <div class="item-content">
+                  <span class="item-text">GitHub 10</span>
+                  <span class="item-desc">Today's trending repos</span>
+                </div>
+                <kbd class="item-shortcut">⌃⇧G</kbd>
+              </button>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-group">
+              <div class="dropdown-label">Tools</div>
+              <button class="dropdown-item" id="btn-compare">
+                <span class="item-icon">⚖</span>
+                <div class="item-content">
+                  <span class="item-text">Compare Ideas</span>
+                  <span class="item-desc">Side-by-side analysis</span>
+                </div>
+                <kbd class="item-shortcut">⌃⇧C</kbd>
+              </button>
+              <button class="dropdown-item" id="btn-export-all">
+                <span class="item-icon">📦</span>
+                <div class="item-content">
+                  <span class="item-text">Export All</span>
+                  <span class="item-desc">Download all notes</span>
+                </div>
+                <kbd class="item-shortcut">⌃⇧E</kbd>
+              </button>
+              <button class="dropdown-item" id="btn-terminal-menu">
+                <span class="item-icon">⌬</span>
+                <div class="item-content">
+                  <span class="item-text">Terminal</span>
+                  <span class="item-desc">Command-line interface</span>
+                </div>
+                <kbd class="item-shortcut">⌃`</kbd>
+              </button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-new2">+ New Idea</button>
+      </div>
+    </div>
+    <div class="desk-area" id="desk-area">
+      <div class="marginalia" id="marginalia"><b>Ω</b> · research desk</div>
+      <div class="view" id="view"></div>
+    </div>
+  </main>
+
+  <!-- Command Palette -->
+  <div class="palette-backdrop hidden" id="palette-backdrop">
+    <div class="palette" id="palette" role="dialog" aria-modal="true">
+      <div class="palette-input-wrap">
+        <span class="palette-icon">⌕</span>
+        <input id="palette-input" type="text" placeholder="Type a command or search…" aria-label="Command palette">
+        <kbd class="palette-kbd">Esc</kbd>
+      </div>
+      <div class="palette-results" id="palette-results"></div>
+      <div class="palette-footer">
+        <span><kbd>↑↓</kbd> Navigate</span>
+        <span><kbd>↵</kbd> Select</span>
+        <span><kbd>Esc</kbd> Close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sort Menu -->
+  <div class="sort-menu hidden" id="sort-menu">
+    <button class="sort-option active" data-sort="default">Default</button>
+    <button class="sort-option" data-sort="name">Name A→Z</button>
+    <button class="sort-option" data-sort="modified">Last Modified</button>
+    <button class="sort-option" data-sort="qa">Most Questions</button>
+    <button class="sort-option" data-sort="created">Newest First</button>
+  </div>
+
+  <!-- Keyboard Shortcuts Help -->
+  <div class="shortcuts-panel hidden" id="shortcuts-panel">
+    <div class="shortcuts-header">
+      <h3>Keyboard Shortcuts</h3>
+      <button class="close-btn" id="close-shortcuts">✕</button>
+    </div>
+    <div class="shortcuts-grid">
+      <div class="shortcut-group">
+        <h4>Navigation</h4>
+        <div class="shortcut"><kbd>Ctrl+K</kbd><span>Command palette</span></div>
+        <div class="shortcut"><kbd>Ctrl+/</kbd><span>Focus search</span></div>
+        <div class="shortcut"><kbd>Esc</kbd><span>Go home / Close</span></div>
+        <div class="shortcut"><kbd>?</kbd><span>Show shortcuts</span></div>
+      </div>
+      <div class="shortcut-group">
+        <h4>Actions</h4>
+        <div class="shortcut"><kbd>Ctrl+N</kbd><span>New idea</span></div>
+        <div class="shortcut"><kbd>Ctrl+E</kbd><span>Export current</span></div>
+        <div class="shortcut"><kbd>Ctrl+P</kbd><span>Toggle pin</span></div>
+        <div class="shortcut"><kbd>Del</kbd><span>Delete current</span></div>
+      </div>
+      <div class="shortcut-group">
+        <h4>Ideas</h4>
+        <div class="shortcut"><kbd>Ctrl+1-9</kbd><span>Switch idea</span></div>
+        <div class="shortcut"><kbd>←</kbd><span>Notes tab</span></div>
+        <div class="shortcut"><kbd>→</kbd><span>Chat tab</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Menu -->
+  <div class="context-menu hidden" id="context-menu">
+    <button class="ctx-item" data-action="open">Open</button>
+    <button class="ctx-item" data-action="pin">★ Pin</button>
+    <button class="ctx-item" data-action="rename">Rename</button>
+    <button class="ctx-item" data-action="export">Export .md</button>
+    <div class="ctx-divider"></div>
+    <button class="ctx-item ctx-danger" data-action="delete">Delete</button>
+  </div>
+
+  <!-- Terminal Window -->
+  <div class="terminal-window hidden" id="terminal-window">
+    <div class="terminal-titlebar" id="terminal-titlebar">
+      <div class="terminal-title">
+        <span class="terminal-icon">⌬</span>
+        <span>Ω Terminal</span>
+      </div>
+      <div class="terminal-controls">
+        <button class="terminal-btn" id="terminal-minimize" title="Minimize">─</button>
+        <button class="terminal-btn" id="terminal-maximize" title="Maximize">□</button>
+        <button class="terminal-btn terminal-close" id="terminal-close" title="Close">✕</button>
+      </div>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+      <div class="terminal-output" id="terminal-output"></div>
+      <div class="terminal-input-line">
+        <span class="terminal-prompt">Ω ~ $</span>
+        <input class="terminal-input" id="terminal-input" type="text" spellcheck="false" autocomplete="off" placeholder="Type 'help' for commands...">
+      </div>
+    </div>
+    <div class="terminal-resize" id="terminal-resize"></div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="modal-backdrop">
+    <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+  </div>
+  <div class="toasts" id="toasts"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
