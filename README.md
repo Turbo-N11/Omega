@@ -1,4 +1,4 @@
-# Omega Researc# Omega
+# Omega
 
 > **Omega is a research tool for exploring the web, investigating topics, and organizing information through AI-powered research workflows.**
 
