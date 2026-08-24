@@ -3,7 +3,7 @@
 > **Omega is a research tool for exploring the web, investigating topics, and organizing information through AI-powered research workflows.**
 
 <p align="center">
-  <img src="images/hero.png" alt="Omega" width="800">
+  <img src="images/home.png" alt="Omega" width="800">
 </p>
 
 ---
